@@ -1,0 +1,4 @@
+name: paratytes
+version: '${project.version}'
+main: org.laser.paratytes.Paratytes
+api-version: '1.20'
