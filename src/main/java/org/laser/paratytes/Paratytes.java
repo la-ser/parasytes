@@ -49,7 +49,6 @@ public final class Paratytes extends JavaPlugin implements Listener {
 
     // start base, join base, return to your base
     @EventHandler
-    @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 
         if (event.getWhoClicked() instanceof Player) {
