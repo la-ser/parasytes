@@ -9,5 +9,8 @@
         <module name="paratytes" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="paratytes" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
