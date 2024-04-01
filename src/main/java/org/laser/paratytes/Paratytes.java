@@ -18,6 +18,8 @@ import java.util.UUID;
 
 public final class Paratytes extends JavaPlugin implements Listener {
 
+    private CreateWorld createWorld;
+
     private HashMap<UUID, ItemStack[]> savedInventories = new HashMap<>();
 
     @Override
@@ -28,19 +30,17 @@ public final class Paratytes extends JavaPlugin implements Listener {
     // saves inventory + player gets lobby inventory
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-
         Player player = event.getPlayer();
-
         saveInventory(player);
-
         player.getInventory().clear();
-
         player.getInventory().setItem(0, new ItemStack(Material.SCUTE, 1));
-
     }
 
     // save / restore inventory
-    private void saveInventory(Player player) { savedInventories.put(player.getUniqueId(), player.getInventory().getContents()); }
+    private void saveInventory(Player player) {
+        savedInventories.put(player.getUniqueId(), player.getInventory().getContents());
+    }
+
     private void restoreInventory(Player player) {
         if (savedInventories.containsKey(player.getUniqueId())) {
             player.getInventory().setContents(savedInventories.get(player.getUniqueId()));
@@ -48,31 +48,17 @@ public final class Paratytes extends JavaPlugin implements Listener {
         }
     }
 
-    // start base, join base, return to your base
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-
-        ItemStack clickedItem = event.getCurrentItem();
-        Player player = (Player) event.getWhoClicked();
-
-        if (event.getWhoClicked() instanceof Player) {
-            if (event.getClickedInventory() != null) {
-                if (event.getRawSlot() < event.getView().getTopInventory().getSize()) event.setCancelled(true);
-            }
-        }
-
-        if (event.getView().getTitle().equals("Base Operations Menu")) handleBaseOperations(player, clickedItem);
-    }
-
+    // Handle player left-click with item in hand
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
-        if (itemInHand.getType() == Material.SCUTE && event.getAction().name().contains("LEFT_CLICK")) openBaseInventory(player);
+        if (itemInHand.getType() == Material.SCUTE && event.getAction().name().contains("LEFT_CLICK")) {
+            openBaseInventory(player);
+        }
     }
 
     private void openBaseInventory(Player player) {
-
         Inventory baseInventory = Bukkit.createInventory(player, org.bukkit.event.inventory.InventoryType.HOPPER, "Base Operations Menu");
 
         ItemStack establishBaseItem = new ItemStack(Material.GHAST_TEAR);
@@ -97,13 +83,14 @@ public final class Paratytes extends JavaPlugin implements Listener {
     }
 
     private void handleBaseOperations(Player player, ItemStack clickedItem) {
-
         if (clickedItem != null && clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasDisplayName()) {
             String itemName = clickedItem.getItemMeta().getDisplayName();
-
             if (itemName.equals("Establish a base")) {
+                // Funktion zum Gründen einer Base
             } else if (itemName.equals("Join base")) {
+                // Funktion zum Beitritt zu einer Base
             } else if (itemName.equals("Return to base")) {
+                // Funktion zur Rückkehr zur eigenen Base
             }
         }
     }
@@ -112,5 +99,4 @@ public final class Paratytes extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
     }
-
 }
