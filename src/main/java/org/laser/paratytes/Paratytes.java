@@ -25,6 +25,8 @@ public final class Paratytes extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
+
+        createWorld = new CreateWorld(this);
     }
 
     // saves inventory + player gets lobby inventory
