@@ -104,8 +104,6 @@ public final class Paratytes extends JavaPlugin implements Listener {
         }
     }
 
-
-
     private void openBaseInventory(Player player) {
 
         Inventory baseInventory = Bukkit.createInventory(player, org.bukkit.event.inventory.InventoryType.HOPPER, "Base Operations Menu");
