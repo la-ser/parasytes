@@ -2,8 +2,6 @@ package org.laser.paratytes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,78 +13,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.UUID;
 
 public final class Paratytes extends JavaPlugin implements Listener {
 
     private CreateWorld createWorld;
+
     private HashMap<UUID, ItemStack[]> savedInventories = new HashMap<>();
-
-
-    private File playerDataFile;
-    private FileConfiguration playerDataConfig;
 
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
-        createWorld = new CreateWorld(this);
-
-
-        playerDataFile = new File(getDataFolder(), "playerdata.yml");
-        playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
     }
 
     // saves inventory + player gets lobby inventory
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-
         Player player = event.getPlayer();
         saveInventory(player);
         player.getInventory().clear();
-
-        if (!playerDataConfig.contains(player.getUniqueId().toString())) {
-            playerDataConfig.set(player.getUniqueId().toString(), 0);
-        }
-
-        int worldAmount = playerDataConfig.getInt(player.getUniqueId().toString());
-
-        ItemStack unusedMap = new ItemStack(Material.PAPER);
-        ItemMeta unusedMapMeta = unusedMap.getItemMeta();
-        unusedMapMeta.setCustomModelData(1);
-        unusedMapMeta.setDisplayName("§aUnused Map");
-        unusedMap.setItemMeta(unusedMapMeta);
-        ItemStack usedMap = new ItemStack(Material.PAPER);
-        ItemMeta usedMapMeta = usedMap.getItemMeta();
-        usedMapMeta.setCustomModelData(2);
-        usedMapMeta.setDisplayName("§eUsed Map");
-        usedMap.setItemMeta(usedMapMeta);
-
-        if (worldAmount == 0) {
-            player.getInventory().setItem(11, unusedMap);
-            player.getInventory().setItem(13, unusedMap);
-            player.getInventory().setItem(15, unusedMap);
-        } else if (worldAmount == 1) {
-            player.getInventory().setItem(11, usedMap);
-            player.getInventory().setItem(13, unusedMap);
-            player.getInventory().setItem(15, unusedMap);
-        } else if (worldAmount == 2) {
-            player.getInventory().setItem(11, usedMap);
-            player.getInventory().setItem(13, usedMap);
-            player.getInventory().setItem(15, unusedMap);
-        } else if (worldAmount == 3) {
-            player.getInventory().setItem(11, usedMap);
-            player.getInventory().setItem(13, usedMap);
-            player.getInventory().setItem(15, usedMap);
-        }
-
-        //hier musst du spieler inventar vergeben und die welten benennen jede einezlne situation
-
-    }
-
-    private void givePlayerInventory() {
-
+        player.getInventory().setItem(0, new ItemStack(Material.SCUTE, 1));
     }
 
     // save / restore inventory
@@ -104,13 +51,14 @@ public final class Paratytes extends JavaPlugin implements Listener {
     // Handle player left-click with item in hand
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-
         Player player = event.getPlayer();
-
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        if (itemInHand.getType() == Material.SCUTE && event.getAction().name().contains("LEFT_CLICK")) {
+            openBaseInventory(player);
+        }
     }
 
-    private void openBaseMenu(Player player) {
-
+    private void openBaseInventory(Player player) {
         Inventory baseInventory = Bukkit.createInventory(player, org.bukkit.event.inventory.InventoryType.HOPPER, "Base Operations Menu");
 
         ItemStack establishBaseItem = new ItemStack(Material.GHAST_TEAR);
@@ -119,18 +67,32 @@ public final class Paratytes extends JavaPlugin implements Listener {
         establishBaseItem.setItemMeta(establishBaseMeta);
         baseInventory.setItem(0, establishBaseItem);
 
+        ItemStack joinBaseItem = new ItemStack(Material.ENDER_EYE);
+        ItemMeta joinBaseMeta = joinBaseItem.getItemMeta();
+        joinBaseMeta.setDisplayName("Join base");
+        joinBaseItem.setItemMeta(joinBaseMeta);
+        baseInventory.setItem(2, joinBaseItem);
+
+        ItemStack returnToBaseItem = new ItemStack(Material.COMPASS);
+        ItemMeta returnToBaseMeta = returnToBaseItem.getItemMeta();
+        returnToBaseMeta.setDisplayName("Return to base");
+        returnToBaseItem.setItemMeta(returnToBaseMeta);
+        baseInventory.setItem(4, returnToBaseItem);
+
         player.openInventory(baseInventory);
     }
 
     private void handleBaseOperations(Player player, ItemStack clickedItem) {
-
         if (clickedItem != null && clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasDisplayName()) {
             String itemName = clickedItem.getItemMeta().getDisplayName();
             if (itemName.equals("Establish a base")) {
                 // Funktion zum Gründen einer Base
+            } else if (itemName.equals("Join base")) {
+                // Funktion zum Beitritt zu einer Base
+            } else if (itemName.equals("Return to base")) {
+                // Funktion zur Rückkehr zur eigenen Base
             }
         }
-
     }
 
     @Override
