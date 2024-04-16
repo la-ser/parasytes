@@ -29,7 +29,7 @@ public final class Paratytes extends JavaPlugin implements Listener {
 
         if (clickedBlock != null && clickedBlock.getType() == Material.RED_BED) {
             Location bedLocation = clickedBlock.getLocation();
-            if (bedLocation.getBlockX() == 46 && bedLocation.getBlockY() == 57 && bedLocation.getBlockZ() == 54) player.sendMessage("Time to go to bed!!!");
+            if (bedLocation.getBlockX() == 46 && bedLocation.getBlockY() == 57 && bedLocation.getBlockZ() == 54 || bedLocation.getBlockZ() == 53) player.sendMessage("Time to go to bed!!!");
         }
     }
 }
